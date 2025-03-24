@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Video Game Cataloger login page{% endblock %}
+
+{% block content %}
+<div class="wrapper">    
+    <div><h1>Hello! Welcome to the Video Game Catologer!</h1></div>
+
+    <div><p>This is a website where you can catalog all of the video game consoles, 
+        peripherals, and games that you own. Log in below or if you don't have an account with us,
+    click the sign up button to get started. We hope you enjoy using our site!</p></div>
+
+    <p id="error-message"></p>
+
+    <div><h2>Login</h2></div>
+
+    <div>
+    <form id="form" action="" method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="username" required>
+        </div>
+       
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="password" required>
+        </div>
+        
+        <div><input type="submit" value="log in"></div>
+    </form>    
+    </div>
+    <p>Don't have an account?</p>
+    <button onclick="location.href='{% url 'database_signup' %}'">click here to sign up!</button>   
+</div>
+
+<script src="{% static 'js/Databasefunctionality.js' %}"></script>
+{% endblock %}

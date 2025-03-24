@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Database Display{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <h2>Welcome to the database!</h2>
+
+    <p>You can add, edit, remove, and search for any item that you want!</p>
+
+    <button onclick="location.href='{% url 'add_data' %}'">add a new element</button>
+
+    <table>
+        <caption><!--insert console name here--> Database</caption>
+        <tr>
+            <th>Name</th>
+            <th>Catagory</th>
+            <th>Publisher/Manufacturer</th>
+            <th>Release Year</th>
+            <th>Quantity</th>
+            <th>Condition</th>
+            <th>Price Paid</th>
+        </tr>
+        <tr>
+        </tr>
+    </table>    
+</div>
+{% endblock %}

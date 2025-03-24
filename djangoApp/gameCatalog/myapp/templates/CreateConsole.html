@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add a console database{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <h2>So you want to create a database for a new console?</h2>
+
+    <p>We're going to need some information about the console to create your database. Please enter it in the fields below.</p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <p>
+            <label for="ConsoleName">Console Name:</label>
+            <input type="text" id="ConsoleName" name="ConsoleName" placeholder="Console Name here" required>
+        </p>
+        
+        <p>
+            <label for="releaseYear">Release Year:</label>
+            <input type="number" id="releaseYear" name="releaseYear" placeholder="release year" required>
+        </p>
+        
+        <p>
+            <label for="Manufacturer">Manufacturer:</label>
+            <input type="text" id="Manufacturer" name="Manufacturer" placeholder="Manufacturer" required>
+        </p>
+
+        <p>
+            <input type="submit" value="enter">
+        </p>
+    </form>
+</div>
+{% endblock %}
