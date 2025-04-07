@@ -8,7 +8,7 @@ const DatabaseDisplay = () => {
   const [consoleName, setConsoleName] = useState("Console");
   
   useEffect(() => {
-    // Get console name from state if available
+    
     if (location.state && location.state.consoleName) {
       setConsoleName(location.state.consoleName);
     }
@@ -36,7 +36,7 @@ const DatabaseDisplay = () => {
           </tr>
         </thead>
         <tbody>
-          {/* Table content will be populated dynamically */}
+          {}
         </tbody>
       </table>
     </div>

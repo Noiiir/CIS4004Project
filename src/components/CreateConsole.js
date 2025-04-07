@@ -17,9 +17,7 @@ const CreateConsole = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Console data submitted:", formData);
-    // Here you would typically save the console data to your database
     
-    // Navigate to the database display with the new console
     navigate("/databasedisplay", { state: { consoleName: formData.consoleName } });
   };
 

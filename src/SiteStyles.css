@@ -1,7 +1,7 @@
-/*importing the font from google*/
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-/*color variables*/
+
 :root{
   --accent-color: rgb(161, 50, 161); 
   --base-color: rgb(76, 148, 255); 
@@ -27,7 +27,7 @@ body{
   background-size: cover; 
   background-position: right; 
   background-color: var(--base-color);
-  /*background-image: url(Strangler.png);*/
+  
   display: flex;
   justify-content: center;
 }
@@ -134,11 +134,11 @@ form input:focus{
 
 div:has(input:focus) > label, 
 div:has(select:focus) > label {
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
-  color: white; /* Ensure text is visible on darker background */
+  background-color: rgba(0, 0, 0, 0.7); 
+  color: white; 
 }
 
-/* Style for the select element when focused */
+
 select:focus {
   outline: none;
   border-color: var(--text-color);
@@ -211,28 +211,28 @@ form div.incorrect input{
   border-color: red; 
 }
 
-/* Increase label width */
+
 form label {
-  width: 180px;  /* Increase from 150px */
-  font-size: 1.3rem;  /* Slightly reduced from 1.5rem */
-  padding: 0 10px;  /* Add some padding for text */
-  white-space: nowrap; /* Prevent text wrapping in labels */
+  width: 180px;  
+  font-size: 1.3rem;  
+  padding: 0 10px; 
+  white-space: nowrap; 
 }
 
-/* Make form wider */
+
 form {
-  width: min(500px, 95%);  /* Increased from 400px */
-  gap: 15px;  /* Increased from 10px for more spacing */
+  width: min(500px, 95%);  
+  gap: 15px;  
 }
 
-/* Improve alignment and positioning */
+
 form > div {
   width: 100%;
   display: flex;
-  justify-content: flex-start;  /* Changed from center */
+  justify-content: flex-start;  
 }
 
-/* Make submit button full width and styled consistently */
+
 form input[type="submit"] {
   width: 100%;
   margin-top: 15px;
@@ -251,29 +251,29 @@ form input[type="submit"]:hover {
   background-color: var(--text-color);
 }
 
-/* Fix for select dropdown text being cut off */
+
 select {
   box-sizing: border-box;
   flex-grow: 1;
   min-width: 0;
   height: 50px;
-  padding: 0 1em; /* Changed from 1em to 0 1em (top/bottom, left/right) */
+  padding: 0 1em; 
   font: inherit;
-  border-radius: 0 10px 10px 0; /* Match the input style */
+  border-radius: 0 10px 10px 0; 
   border-left: none;
   border: 2px solid var(--input-color);
   background-color: var(--input-color);
   transition: 150ms ease;
   
-  /* These properties fix the text alignment */
+  
   display: flex;
   align-items: center;
   line-height: normal;
   text-align: left;
-  appearance: menulist; /* Ensure native dropdown arrow appears */
+  appearance: menulist; 
+
 }
 
-/* Make sure text is centered vertically */
 select option {
   padding: 10px;
   font-size: 1rem;

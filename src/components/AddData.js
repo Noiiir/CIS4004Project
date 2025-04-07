@@ -22,9 +22,7 @@ const AddData = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Item data submitted:", formData);
-    // Here you would typically save the item data to your database
     
-    // Navigate back to the database display
     navigate("/databasedisplay", { 
       state: { 
         consoleName: location.state?.consoleName || "Console"
