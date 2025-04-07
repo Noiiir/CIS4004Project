@@ -1,17 +1,7 @@
 from django.shortcuts import render
-from rest_framework import viewsets
-from myapp.models import User
-from myapp.models import Item
-from myapp.serializers import UserSerializer
-from myapp.serializers import ItemSerializer
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-class ItemViewSet(viewsets.ModelViewSet):
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 def home(request):
     return render(request, "home.html")
@@ -39,3 +29,11 @@ def database_functionality(request):
 
 def game_copies(request):
     return render(request, "GameCopies.html")
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def protected_route(request):
+    return Response({
+        'message': 'You have accessed a protected endpoint',
+        'user_id': request.user.username
+    })
