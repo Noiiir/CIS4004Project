@@ -1,4 +1,17 @@
 from django.shortcuts import render
+from rest_framework import viewsets
+from myapp.models import User
+from myapp.models import Item
+from myapp.serializers import UserSerializer
+from myapp.serializers import ItemSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class ItemViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
 
 def home(request):
     return render(request, "home.html")
