@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>Input entity data</title>
+        <meta charset = "UTF-8">
+        <link rel="stylesheet" href="SiteStyles.css">
+    </head>
+
+    <body>
+        <h2>Would you like to add a new element to the database?</h2>
+
+        <p>To add a new element to the database, We're going to need some information.</p>
+        
+
+
+      <form action="" method="POST">  
+        <p>
+            <label for="Name">Name:</label>
+            <input type="text" id="Name" name="Name" placeholder="name" required>
+        </p>
+            <label for="Catagory">Catagory:</label>
+            <!--dropdown menu-->    
+            <select>
+                <option value ="Game Copy">Game Copy</option>
+                <option value ="Console">Console</option>
+                <option value ="Peripheral">Peripheral/controller</option>
+
+            </select>
+        <p>
+            <label for="Publisher">Publisher:</label>
+            <input type="text" id="Publisher" name="Publisher" placeholder="Publisher" required>
+        </p>
+        
+        <p>
+            <label for="ReleaseYear">Release year:</label>
+            <input type="number" id="ReleaseYear" name="ReleaseYear" placeholder="ReleaseYear" required>
+        </p>
+        
+        <p>
+            <label for="Quantity">Quantity:</label>
+            <input type="number" id="Quantity" name="Quantity" placeholder="Quantity" required>
+        </p>
+        
+        <p>
+            <label for="Condition">Condition:</label>
+            <input type="text" id="Condition" name="Condition" placeholder="Condition" required>
+        </p>
+
+        <p>
+            <label for="PricePaid">Price Paid:$</label>
+            <input type="number" id="PricePaid" name="PricePaid" placeholder="Price Paid" required>
+        </p>
+
+        <p>
+            <input type="submit" value="Enter">
+        </p>
+
+        </form>
+    </body>
+
+</html>

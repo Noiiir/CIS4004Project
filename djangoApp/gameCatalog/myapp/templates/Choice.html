@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Choice{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div>
+        <h2>Hello and welcome to the videogame database!</h2>
+    </div>
+
+    <p>Please click on the button below to get started with cataloging or click on 
+        "About our site" to learn more about what our purpose is. 
+    </p>
+
+    <button onclick="location.href='{% url 'game_copies' %}'">Videogame Database</button>
+    <button onclick="location.href='{% url 'consoles_peripherals' %}'">About our site</button>
+</div>
+{% endblock %}
+

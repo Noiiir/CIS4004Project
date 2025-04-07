@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Sign up page</title>
+        <meta charset = "UTF-8">
+        
+        <script type="text/javascript" src="Databasefunctionality.js" defer></script>
+        <link rel="stylesheet" href="SiteStyles.css">
+    </head>
+
+    <body>
+        <div class="wrapper">
+        <div>Welcome to the sign up page!</div>
+
+        <p>Please input your information below.</p>
+
+        <p id="error-message"></p>
+        
+        <form id="form" action="" method="POST">
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Blahblahblah@blah.com" required>
+            </div>
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="username" required>
+            </div>
+           <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="password" required>
+           </div>
+           
+           <div>
+                 <label for="confirmpassword">Confirm Password:</label>
+                 <input type="password" id="confirmpassword" name="confirmpassword" placeholder="confirm password"required>
+           </div>
+
+           <div><input type="submit" Value="Submit"></div>
+        </form>
+
+        </div>
+    </body>
+
+</html>
