@@ -11,7 +11,8 @@ root.render(
       clientId="FoPDQ8vskgHk9R3kMeztmJrjo05690sg"
       authorizationParams={{
         redirect_uri: window.location.origin,
-        
+        audience: "https://api.videogamedb.com",
+        scope: 'openid profile email read:items write:items'
       }}
     >
         <App />

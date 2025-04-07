@@ -10,6 +10,7 @@ import About from './components/About';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavBar from './components/NavBar';
 import { useAuth0 } from '@auth0/auth0-react';
+import { AuthProvider } from './auth/AuthProvider';
 
 
 const Layout = ({ children }) => {
@@ -59,7 +60,10 @@ const App = () => {
     }
   ]);
 
-  return <RouterProvider router={router} />;
+  return (<AuthProvider> 
+  <RouterProvider router={router} />
+    </AuthProvider>
+  );
 };
 
 export default App;
