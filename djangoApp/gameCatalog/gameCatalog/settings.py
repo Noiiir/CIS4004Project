@@ -103,14 +103,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gameCatalog.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'VGC',
-        'USER': 'django',
-        'PASSWORD': '712f6dacbe1727f5c819f8343f9a03592ccc2ebf80c4fb59',
-        'HOST': '138.197.100.112',
-        'PORT': '3306',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'VGC',
+    #     'USER': 'django',
+    #     'PASSWORD': '712f6dacbe1727f5c819f8343f9a03592ccc2ebf80c4fb59',
+    #     'HOST': '138.197.100.112',
+    #     'PORT': '3306',
+    # }
 }
 
 AUTH_PASSWORD_VALIDATORS = [

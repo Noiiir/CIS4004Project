@@ -46,7 +46,7 @@ const AddData = () => {
 
       await createItem(itemData, token);
 
-        navigate("/databasedisplay", { 
+      navigate("/databasedisplay", { 
         state: { 
           consoleName: location.state?.consoleName || "Console",
           success: "Item added successfully!"
