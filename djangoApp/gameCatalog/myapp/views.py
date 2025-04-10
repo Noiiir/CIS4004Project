@@ -1,7 +1,61 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import viewsets, status
+from django.contrib.auth.models import User
+from myapp.models import Item
+from myapp.serializers import UserSerializer
+from myapp.serializers import ItemSerializer
+from django.contrib.auth import authenticate
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+class ItemViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = [AllowAny]
+        
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        email = request.data.get('email')
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = User.objects.create_user(username=username, password=password, email=email)
+        user.first_name = request.data.get('first_name', '')
+        user.last_name = request.data.get('last_name', '')
+        user.save()
+        
+        return Response({"message": "User created successfully!"}, status=status.HTTP_201_CREATED)
+
+class LoginViewSet(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response({"error": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = authenticate(request, username = username, password = password)
+
+        if user is not None:
+            return Response({
+                'message': 'Login successful!',
+                'id': user.id
+            })
+        else:
+            return Response({'error': "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 def home(request):
     return render(request, "home.html")

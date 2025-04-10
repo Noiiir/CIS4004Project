@@ -20,5 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('myapp.auth_urls')),  # Add authentication URLs
-    path('myapp/', include('myapp.urls')),
+    path('', include('myapp.urls')),
 ]
