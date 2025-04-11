@@ -1,19 +1,16 @@
-import json
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, status
-from django.contrib.auth.models import User
-from myapp.models import Item
+# from django.contrib.auth.models import User
+from myapp.models import Item, User
 from myapp.serializers import (
     UserSerializer,
     ItemSerializer,
-    FilterItemInputSerializer,
 )
 from django.contrib.auth import authenticate
-from django.db.models import Q
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -107,7 +104,9 @@ class CreateItemView(APIView):
 
     def post(self, request):
         serializer = ItemSerializer(data = request.data)
-        serializer.is_valid()
+        if not serializer.is_valid():
+            return Response({"Error": "Malformed JSON submitted", "details": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
+        
         serializer.save()
         return Response({'message': 'Creation successful'}, status = status.HTTP_200_OK)
 
@@ -150,6 +149,33 @@ class GetDjangoToken(APIView):
 
     def get(self, request):
         return Response({"Error": ""}, status=status.HTTP_200_OK)
+    
+class CreateUserView(APIView):
+    """
+        Create a new user.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class GetUserById(APIView):
+    """
+        Get a user by ID.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, userid):
+        try:
+            user = User.objects.get(userid=userid)
+            serializer = UserSerializer(user)
+            return Response({"UserPK": user.pk}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
 
 

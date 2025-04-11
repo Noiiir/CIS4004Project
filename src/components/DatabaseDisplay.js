@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../SiteStyles.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getItems, deleteItem } from "../Api";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuth } from "../auth/AuthProvider";
+import { createUser, getUserPk,createUserBackend,retrieveUserPk } from "../Api"; // Import your createUser function
 
 const DatabaseDisplay = () => {
   const navigate = useNavigate();
@@ -18,11 +19,86 @@ const DatabaseDisplay = () => {
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
 
+  var userPK;
+  var defaultItemQuery = {
+    name: "",
+    category: -1,
+    pubmanu: "",
+    year: -1,
+    quantity: -1,
+    condition: "",
+    price: -1,
+    userid: userPK,
+  };
+
+  // const retrieveUserPk = async () => {
+  //   let _userId = user.sub.split("|")[1];
+
+  //   console.log("Attempting to retrieve user PK for ID:", _userId);
+  //   let res = await getUserPk(_userId);
+  //   if (res.status === 404) {
+  //     console.log("User not found, creating new user...");
+  //     const userInfo = {
+  //       "first_name": user.given_name,
+  //       "last_name": user.family_name,
+  //       "email": user.email,
+  //       "username": user.nickname,
+  //       "userid": _userId,
+  //     }
+
+  //     res = await createUserBackend(userInfo);
+  //     if (res.status === 201) {
+  //       console.log("User created successfully");
+  //     } else {
+  //       console.error("Error creating user:", res);
+  //     }
+
+  //     console.log("User created with ID:", res.data.UserPK);
+  //     res = await getUserPk(_userId);
+  //     if (res.status !== 200) {
+  //       console.error("Error retrieving user:", res);
+  //     }
+  //   }
+
+  //   console.log("User PK retrieved:", res.data.UserPK);
+  //   userPK = res.data.UserPK;
+  // };
+
+  // useEffect(() => {
+  //   retrieveUserPk();
+  // }, []);
+  
+
+ /* const saveUserToDatabase = async (userData) => {
+    try {
+      // Format user data according to your required structure
+      const formattedUserData = {
+        first_name: userData.given_name || userData.name?.split(' ')[0] || '',
+        last_name: userData.family_name || userData.name?.split(' ').slice(1).join(' ') || '',
+        email: userData.email,
+        username: userData.nickname || userData.email.split('@')[0],
+        userid: userData.sub // This is Auth0's unique identifier
+      };
+
+      // Call your existing createUser function
+      const response = await createUser(formattedUserData);
+      console.log('User data saved successfully:', response);
+      return response;
+    } catch (error) {
+      console.error('Error saving user data:', error);
+      // setLoginError('Failed to create user profile. Please try again.');
+      throw error;
+    }
+  };
+*/
+
+
+    
+
+
   useEffect(() => {
     if (location.state && location.state.success) {
       setSuccessMessage(location.state.success);
-      
-      fetchItems();
       
       const timer = setTimeout(() => {
         setSuccessMessage("");
@@ -32,6 +108,8 @@ const DatabaseDisplay = () => {
     }
   }, [location]);
 
+  const hasFetchedItems = useRef(false);
+
   const fetchItems = async () => {
     if (tokenLoading || !user) {
       return;
@@ -39,17 +117,57 @@ const DatabaseDisplay = () => {
     
     try {
       setLoading(true);
-      const data = await getItems(user.sub, token);
-      setItems(data);
+      let userId = user.sub.split("|")[1];
+      let getUserRes = await getUserPk(userId);
+      console.log("user: ", user);
+      if (getUserRes.status == 404) {
+        const newUserData = {
+          email: user.email,
+          username: user.nickname,
+          userid: userId,
+        }
+        console.log("User not found, creating new user with: ", newUserData);
+        let createUserRes = await createUserBackend(newUserData);
+        if (createUserRes.status == 201) {
+          console.log("User created successfully");
+        } else {
+          console.error("Error creating user:", data);
+        }
+        getUserRes = await getUserPk(userId);
+        if (getUserRes.status != 200) {
+          console.error("Error retrieving user:", data);
+        }
+      }
+      let data = await getUserRes.json()
+      userPK = data.UserPK;
+      console.log("User PK retrieved:", userPK);
+      defaultItemQuery.userid = userPK;
+      console.log("Retrieving items with json:", defaultItemQuery);
+      let getItemsRes = await getItems(defaultItemQuery);
+      data = await getItemsRes.json();
+      await setItems(data);
     } catch (error) {
       console.error("Error fetching items:", error);
       setError("Failed to load items. Please try again.");
     } finally {
       setLoading(false);
     }
+    console.log("Items fetched:", items);
   };
 
+  // Updated useEffect to prevent duplicate calls.
   useEffect(() => {
+    console.log("useEffect triggered with:", { user, token, tokenLoading });
+    
+    // If we're still loading the token or we don't have a user, do nothing.
+    if (tokenLoading || !user) return;
+    
+    // If we've already fetched items, don't fetch again.
+    if (hasFetchedItems.current) return;
+    
+    // Mark as fetched to prevent duplicate calls.
+    hasFetchedItems.current = true;
+    console.log("Calling fetchItems");
     fetchItems();
   }, [user, token, tokenLoading]);
 
@@ -78,7 +196,7 @@ const sortedItems = [...items].sort((a,b) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {
         await deleteItem(itemId, token);
-        setItems(items.filter(item => item.itemID !== itemId));
+        setItems(items.filter(item => item.id !== itemId));
         setSuccessMessage("Item deleted successfully!");
       } catch (error) {
         console.error("Error deleting item:", error);
@@ -158,13 +276,13 @@ const sortedItems = [...items].sort((a,b) => {
                   <td>${item.price}</td>
                   <td>
                     <button 
-                      onClick={() => handleEditItem(item.itemID)}
+                      onClick={() => handleEditItem(item.id)}
                       style={{ padding: "5px 10px", margin: "0 5px" }}
                     >
                       Edit
                     </button>
                     <button 
-                      onClick={() => handleDeleteItem(item.itemID)}
+                      onClick={() => handleDeleteItem(item.id)}
                       style={{ 
                         padding: "5px 10px", 
                         margin: "0 5px",

@@ -11,6 +11,8 @@ from .views import (
     CreateItemView,
     UpdateItemView,
     DeleteItemView,
+    CreateUserView,
+    GetUserById
 )
 
 router = routers.DefaultRouter()
@@ -24,4 +26,7 @@ urlpatterns = [
     path('api/updateUserItem/<int:pk>/', UpdateItemView.as_view(), name='update_user_item'),
     path('api/deleteUserItem/<int:pk>/', DeleteItemView.as_view(), name='delete_user_item'),
     path('api/getAllItems/', ItemViewSet.as_view({'get': 'list'}), name='get_all_items'),
+    path('api/createUser/', CreateUserView.as_view(), name='create_user'),
+    path('api/getAllUsers/', UserViewSet.as_view({'get': 'list'}), name='get_all_users'),
+    path('api/getUser/<str:userid>/', GetUserById.as_view(), name='get_user'),
 ]

@@ -21,3 +21,8 @@ class FilterItemInputSerializer(serializers.Serializer):
     condition = serializers.CharField(required=False, allow_blank=True)
     price = serializers.IntegerField(required=False)
     userid = serializers.IntegerField(required=False)
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'username', 'userid']

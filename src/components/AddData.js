@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../SiteStyles.css";
 import { useNavigate, useLocation } from "react-router-dom";
-import { createItem } from "../Api";
+import { createItem, getUserPk } from "../Api";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuth } from "../auth/AuthProvider";
 
@@ -33,6 +33,11 @@ const AddData = () => {
     setError("");
 
     try{
+      let userId = user.sub.split("|")[1];
+      const getUserRes = await getUserPk(userId);
+      let data = await getUserRes.json();
+      const userPk = data.UserPK;
+
       const itemData = {
         name: formData.name,
         category: formData.category === "Game Copy" ? 1 : formData.category === "Console" ? 2 : 3,
@@ -41,10 +46,13 @@ const AddData = () => {
         quantity: parseInt(formData.quantity),
         condition: formData.condition,
         price: parseFloat(formData.pricePaid),
-        userid: user.sub 
+        userid: userPk 
       };
 
-      await createItem(itemData, token);
+      console.log("user:", user)
+      console.log("Item data to be sent:", itemData);
+
+      await createItem(itemData);
 
       navigate("/databasedisplay", { 
         state: { 
@@ -137,16 +145,20 @@ const AddData = () => {
         </div>
         
         <div>
-          <label htmlFor="condition">Condition:</label>
-          <input
-            type="text"
+         <label htmlFor="condition">Condition:</label>
+          <select
             id="condition"
             name="condition"
-            placeholder="Condition"
             value={formData.condition}
             onChange={handleChange}
             required
-          />
+           >
+            <option value="">-- Select Condition --</option>
+            <option value="new">New</option>
+            <option value="like_new">Like New</option>
+            <option value="used">Used</option>
+            <option value="heavily_used">Heavily Used</option>
+          </select>
         </div>
 
         <div>
