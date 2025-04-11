@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../SiteStyles.css";
 import { useNavigate, useLocation } from "react-router-dom";
-import { createItem, getUserPk } from "../Api";
+import { createItem, getUserPk, updateItem, getItemById } from "../Api";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAuth } from "../auth/AuthProvider";
 
-const AddData = () => {
+//testing new methods
+
+const EditData = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth0();
   const { token } = useAuth();
+  const { itemId } = location.state;
+
   const [formData, setFormData] = useState({
     name: "",
     category: "Game Copy",
@@ -19,23 +23,64 @@ const AddData = () => {
     condition: "",
     pricePaid: ""
   });
-  const [isSubmitting,setIsSubmitting] = useState(false);
-  const [error, setError ] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  // Category ID to label mapping
+  const categoryMap = {
+    1: "Game Copy",
+    2: "Console",
+    3: "Peripheral"
+  };
+
+  // Fetch item data on mount
+  useEffect(() => {
+    const fetchItemData = async () => {
+      try {
+        const getUserRes = await getUserPk(user.sub.split("|")[1]);
+        let data = await getUserRes.json();
+        const userPk = data.UserPK;
+        const itemIdentifiers = {
+          "pk": itemId,
+          "userid": userPk
+        }
+
+        console.log("Item identifiers:", itemIdentifiers);
+        const getItemRes = await getItemById(itemIdentifiers);
+        data = await getItemRes.json();
+        console.log("Fetched item data:", data);
+
+        setFormData({
+          name: data.name || "",
+          category: categoryMap[data.category] || "Game Copy",
+          publisher: data.pubmanu || "",
+          releaseYear: data.year?.toString() || "",
+          quantity: data.quantity?.toString() || "",
+          condition: data.condition || "",
+          pricePaid: data.price?.toString() || ""
+        });
+      } catch (err) {
+        console.error("Failed to fetch item data:", err);
+        setError("Unable to load item data.");
+      }
+    };
+
+    fetchItemData();
+  }, [itemId, token]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit =  async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log("Item data submitted:", formData);
     setError("");
 
-    try{
-      let userId = user.sub.split("|")[1];
+    try {
+      const userId = user.sub.split("|")[1];
       const getUserRes = await getUserPk(userId);
-      let data = await getUserRes.json();
+      const data = await getUserRes.json();
       const userPk = data.UserPK;
 
       const itemData = {
@@ -48,37 +93,32 @@ const AddData = () => {
         price: parseFloat(formData.pricePaid),
         userid: userPk 
       };
+      //heard
+      //i have an itemId fill up top do you need that?
+      
+      await updateItem(itemId, itemData); 
 
-      console.log("user:", user)
-      console.log("Item data to be sent:", itemData);
-
-      await createItem(itemData);
-
-      navigate("/databasedisplay", { 
-        state: { 
+      navigate("/databasedisplay", {
+        state: {
           consoleName: location.state?.consoleName || "Console",
-          success: "Item added successfully!"
-        } 
+          success: "Item updated successfully!"
+        }
       });
-    }
-    catch (error){
-        console.error("Error adding item:",error);
-        setError("failed to add item, please try again");
-    }
-    finally{
+    } catch (error) {
+      console.error("Error updating item:", error);
+      setError("Failed to update item, please try again");
+    } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
     <div className="wrapper">
-      <h2>Would you like to add a new element to the database?</h2>
+      <h2>Update Item</h2>
 
-      <p>To add a new element to the database, we're going to need some information.</p>
-
-      {error && < p className="error-message">{error} </p>}
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
-        <div>
+      <div>
           <label htmlFor="name">Name:</label>
           <input
             type="text"
@@ -174,22 +214,23 @@ const AddData = () => {
             required
           />
         </div>
-
         <div>
-          <input type="submit"
-           value={isSubmitting ? "Submitting..." : "Enter"} 
-           disabled={isSubmitting}
-           />
+          <input
+            type="submit"
+            value={isSubmitting ? "Submitting..." : "Update"}
+            disabled={isSubmitting}
+          />
         </div>
       </form>
-
-      <button onClick={() => navigate("/databasedisplay")} style={{ cursor: "pointer" }}>
-            Return
-      </button>
       
+      <button onClick={() => navigate("/databasedisplay")} style={{ cursor: "pointer" }}>
+               Return
+            </button>
      
     </div>
+    
   );
 };
 
-export default AddData;
+export default EditData;
+

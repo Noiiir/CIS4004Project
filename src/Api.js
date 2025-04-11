@@ -65,7 +65,7 @@ export const loginUser = async (username, password) => {
   return apiRequest(`${API_BASE_URL}/auth/token/`, 'POST', { username, password });
 };
 export const getUserPk = async (id) => {
-  return apiRequest(`${API_BASE_URL}/api/getUser/${id}`);//nvm cant have anything
+  return apiRequest(`${API_BASE_URL}/api/getUser/${id}`);
 } 
 
 export const createUserBackend = async (userData) => {
@@ -91,10 +91,13 @@ export const createItem = async (itemData) => {
 };
 
 export const updateItem = async (id, itemData) => {
-  return apiRequest(`${API_ENDPOINTS.UPDATE}${id}/`, 'PUT', itemData);
+  return apiRequest(`${API_ENDPOINTS.UPDATE}${id}/`, 'POST', itemData);
 };
 
 export const deleteItem = async (id) => {
   return apiRequest(`${API_ENDPOINTS.DELETE}${id}/`, 'DELETE');
 };
 
+export const getItemById = async (itemData) => {
+  return apiRequest(`${API_BASE_URL}/api/getItemById/`, 'POST', itemData);
+}

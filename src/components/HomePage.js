@@ -12,8 +12,9 @@ const HomePage = () => {
           Please click on the button below to get started with cataloging or click on 
           "About our site" to learn more about our purpose.
         </p>
-  
-        <button onClick={() => navigate("/gamecopiesfront")}>Videogame Database</button>
+        {/* <-- --> */}
+        
+        <button onClick={() => navigate("/databasedisplay")}>Videogame Database</button>
         <button onClick={() => navigate("/about")}>About our site</button>
       </div>
     );

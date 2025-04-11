@@ -30,12 +30,12 @@ body{
   
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .wrapper{
   background-color: var(--base-color);
   height: 100vh; 
-  width: max(40%, 600px);
   padding: 10px; 
   border-radius: 0 20px 20px 0;
   display: flex;
@@ -277,4 +277,14 @@ select {
 select option {
   padding: 10px;
   font-size: 1rem;
+}
+
+thead {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
+
+tbody {
+  background-color: var(--input-color);
+  color: var(--text-color);
 }

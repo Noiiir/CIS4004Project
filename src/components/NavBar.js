@@ -15,7 +15,7 @@ const NavBar = () => {
       backgroundColor: "var(--accent-color)",
       color: "white"
     }}>
-      <div onClick={() => navigate("/home")} style={{ cursor: "pointer" }}>
+      <div onClick={() => navigate("/databasedisplay")} style={{ cursor: "pointer" }}>
         Video Game Cataloger
       </div>
       

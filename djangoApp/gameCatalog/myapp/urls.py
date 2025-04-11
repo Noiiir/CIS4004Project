@@ -4,15 +4,14 @@ from rest_framework import routers
 from .views import (
     UserViewSet,
     ItemViewSet,
-    LoginViewSet,
-    RegisterView,
     UserItemsView,
     GetDjangoToken,
     CreateItemView,
     UpdateItemView,
     DeleteItemView,
     CreateUserView,
-    GetUserById
+    GetUserById,
+    GetItemById,
 )
 
 router = routers.DefaultRouter()
@@ -29,4 +28,5 @@ urlpatterns = [
     path('api/createUser/', CreateUserView.as_view(), name='create_user'),
     path('api/getAllUsers/', UserViewSet.as_view({'get': 'list'}), name='get_all_users'),
     path('api/getUser/<str:userid>/', GetUserById.as_view(), name='get_user'),
+    path('api/getItemById/', GetItemById.as_view(), name='get_item_by_id'),
 ]

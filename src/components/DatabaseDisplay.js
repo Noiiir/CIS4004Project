@@ -206,7 +206,7 @@ const sortedItems = [...items].sort((a,b) => {
   };
   
   const handleEditItem = (itemId) => {
-    navigate("/editdata", { state: { itemId } });
+    navigate("/editData", { state: { itemId } });
   };
 
   const sortIndicator = (field) => {

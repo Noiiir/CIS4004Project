@@ -1,16 +1,14 @@
-from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, status
-# from django.contrib.auth.models import User
 from myapp.models import Item, User
+from django.contrib.auth import authenticate
 from myapp.serializers import (
     UserSerializer,
     ItemSerializer,
 )
-from django.contrib.auth import authenticate
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -177,35 +175,22 @@ class GetUserById(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
+class GetItemById(APIView):
+    """
+        Get an item by ID.
+    """
+    permission_classes = [AllowAny]
 
-
-def home(request):
-    return render(request, "home.html")
-
-def add_data(request):
-    return render(request, "addData.html")
-
-def choice(request):
-    return render(request, "Choice.html")
-
-def consoles_peripherals(request):
-    return render(request, "ConsolesPeripherals.html")
-
-def create_console(request):
-    return render(request, "CreateConsole.html")
-
-def database_display(request):
-    items = Item.object.filter(user_id=request.user.id)
-    return render(request, "DatabaseDisplayTemplate.html", {'items': items})
-
-def database_signup(request):
-    return render(request, "DatabaseSignup.html")
-
-def database_functionality(request):
-    return render(request, "Databasefunctionality.html")
-
-def game_copies(request):
-    return render(request, "GameCopies.html")
+    def post(self, request):
+        request_data = request.data
+        pk = request_data.get('pk', None)
+        usedId = request_data.get('userid', None)
+        try:
+            item = Item.objects.get(pk=pk, userid=usedId)
+            serializer = ItemSerializer(item)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Item.DoesNotExist:
+            return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

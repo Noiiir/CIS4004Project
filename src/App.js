@@ -6,6 +6,7 @@ import GameCopiesFront from './components/GameCopiesFront';
 import DatabaseDisplay from './components/DatabaseDisplay';
 import CreateConsole from './components/CreateConsole';
 import AddData from './components/AddData';
+import EditData from './components/EditData';
 import About from './components/About';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavBar from './components/NavBar';
@@ -57,6 +58,10 @@ const App = () => {
     {
       path: "/about",
       element: <Layout><About /></Layout>
+    },
+    {
+      path: "/editdata",
+      element: <Layout><ProtectedRoute><EditData /></ProtectedRoute></Layout>
     }
   ]);
 
