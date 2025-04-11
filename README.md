@@ -43,5 +43,6 @@
         -Integrate and utilize the tokens provided for Auth0
         -Impove site style
         -Help create helper api functions to the backend
-        -Asisisted in making front end code more organized for collaboration and less messy 
+        -Asisisted in making front end code more organized for collaboration and less messy
+        -Assisted in setting up the files for django, initial set up and basic file outlines generated
 
