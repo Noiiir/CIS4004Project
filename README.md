@@ -40,6 +40,10 @@
 
 The database is hosted on a remote server using DigitalOcean. Access should be available to all IPs. Remote server IP: 138.197.100.112
 
+## Running the Website
+
+To run the website make sure to run the `npm start` and the `python manage.py runserver` commands on separate terminals. Also note that when running the runserver command you must be in the /CIS4004Project/djangoApp/gameCatalog/ directory.
+
 ## Features
 
 - User authentication
