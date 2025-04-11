@@ -10,18 +10,13 @@ const DatabaseDisplay = () => {
   const location = useLocation();
   const { user } = useAuth0();
   const { token, tokenLoading } = useAuth();
-  const [consoleName, setConsoleName] = useState("Console");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   
   useEffect(() => {
-    if (location.state && location.state.consoleName) {
-      setConsoleName(location.state.consoleName);
-    }
-    
-    
+
     if (location.state && location.state.success) {
       setSuccessMessage(location.state.success);
       
@@ -37,23 +32,16 @@ const DatabaseDisplay = () => {
   useEffect(() => {
     const fetchItems = async () => {
       
-      if (tokenLoading) {
+      if (tokenLoading || !user) {
         return;
       }
       
       try {
         setLoading(true);
-        const data = await getItems(token);
+        const data = await getItems(user.sub, token);
         
-        
-        let filteredItems = data;
-        
-       
-        if (user && user.sub) {
-          filteredItems = filteredItems.filter(item => item.userid === user.sub);
-        }
-        
-        setItems(filteredItems);
+        setItems(data);
+
       } catch (error) {
         console.error("Error fetching items:", error);
         setError("Failed to load items. Please try again.");
@@ -63,13 +51,13 @@ const DatabaseDisplay = () => {
     };
     
     fetchItems();
-  }, [user, consoleName, token, tokenLoading]);
+  }, [user, token, tokenLoading]);
   
-  const handleDeleteItem = async (id) => {
+  const handleDeleteItem = async (itemId) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {
-        await deleteItem(id, token);
-        setItems(items.filter(item => item.id !== id));
+        await deleteItem(itemId, token);
+        setItems(items.filter(item => item.itemID !== itemId));
         setSuccessMessage("Item deleted successfully!");
       } catch (error) {
         console.error("Error deleting item:", error);
@@ -78,8 +66,8 @@ const DatabaseDisplay = () => {
     }
   };
   
-  const handleEditItem = (id) => {
-    navigate("/editdata", { state: { itemId: id, consoleName } });
+  const handleEditItem = (itemId) => {
+    navigate("/editdata", { state: { itemId } });
   };
 
   return (
@@ -91,7 +79,7 @@ const DatabaseDisplay = () => {
       {successMessage && <p className="success-message">{successMessage}</p>}
       {error && <p className="error-message">{error}</p>}
 
-      <button onClick={() => navigate("/adddata", { state: { consoleName } })}>
+      <button onClick={() => navigate("/adddata", { state: { userId: user?.sub} })}>
         Add a new element
       </button>
 
@@ -99,7 +87,7 @@ const DatabaseDisplay = () => {
         <p>Loading items...</p>
       ) : (
         <table>
-          <caption>{consoleName} Database</caption>
+          <caption> Database</caption>
           <thead>
             <tr>
               <th>Name</th>
@@ -115,7 +103,7 @@ const DatabaseDisplay = () => {
           <tbody>
             {items.length > 0 ? (
               items.map(item => (
-                <tr key={item.id}>
+                <tr key={item.itemID}>
                   <td>{item.name}</td>
                   <td>
                     {item.category === 1 
@@ -131,13 +119,13 @@ const DatabaseDisplay = () => {
                   <td>${item.price}</td>
                   <td>
                     <button 
-                      onClick={() => handleEditItem(item.id)}
+                      onClick={() => handleEditItem(item.itemID)}
                       style={{ padding: "5px 10px", margin: "0 5px" }}
                     >
                       Edit
                     </button>
                     <button 
-                      onClick={() => handleDeleteItem(item.id)}
+                      onClick={() => handleDeleteItem(item.itemID)}
                       style={{ 
                         padding: "5px 10px", 
                         margin: "0 5px",

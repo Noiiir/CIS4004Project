@@ -85,3 +85,4 @@ export const updateItem = async (id, itemData) => {
 export const deleteItem = async (id) => {
   return apiRequest(`${API_ENDPOINTS.ITEMS}${id}/`, 'DELETE');
 };
+

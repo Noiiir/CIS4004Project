@@ -9,21 +9,33 @@
 
     <p>You can add, edit, remove, and search for any item that you want!</p>
 
-    <button onclick="location.href='{% url 'add_data' %}'">add a new element</button>
+    <button onclick="location.href='{% url 'add_data' %}'">Add a new element</button>
 
     <table>
         <caption><!--insert console name here--> Database</caption>
-        <tr>
-            <th>Name</th>
-            <th>Catagory</th>
-            <th>Publisher/Manufacturer</th>
-            <th>Release Year</th>
-            <th>Quantity</th>
-            <th>Condition</th>
-            <th>Price Paid</th>
-        </tr>
-        <tr>
-        </tr>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Catagory</th>
+                <th>Publisher/Manufacturer</th>
+                <th>Release Year</th>
+                <th>Quantity</th>
+                <th>Condition</th>
+                <th>Price Paid</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.pubmanu }}</td>
+                <td>{{ item.year }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.condition }}</td>
+                <td>{{ item.price }}</td>
+            </tr>
+        </tbody>
     </table>    
 </div>
 {% endblock %}

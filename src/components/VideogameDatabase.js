@@ -65,8 +65,8 @@ const Login = () => {
         }
       }
       
-      
-      navigate("/home");
+      //changed to take to database display
+      navigate("/databasedisplay");
     }
   }, [isAuthenticated, isLoading, navigate, user, error]);
 
