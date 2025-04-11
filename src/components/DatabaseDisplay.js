@@ -14,13 +14,16 @@ const DatabaseDisplay = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  
-  useEffect(() => {
 
+  const [sortField, setSortField] = useState("name");
+  const [sortDirection, setSortDirection] = useState("asc");
+
+  useEffect(() => {
     if (location.state && location.state.success) {
       setSuccessMessage(location.state.success);
       
-     
+      fetchItems();
+      
       const timer = setTimeout(() => {
         setSuccessMessage("");
       }, 3000);
@@ -28,30 +31,48 @@ const DatabaseDisplay = () => {
       return () => clearTimeout(timer);
     }
   }, [location]);
-  
-  useEffect(() => {
-    const fetchItems = async () => {
-      
-      if (tokenLoading || !user) {
-        return;
-      }
-      
-      try {
-        setLoading(true);
-        const data = await getItems(user.sub, token);
-        
-        setItems(data);
 
-      } catch (error) {
-        console.error("Error fetching items:", error);
-        setError("Failed to load items. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchItems = async () => {
+    if (tokenLoading || !user) {
+      return;
+    }
     
+    try {
+      setLoading(true);
+      const data = await getItems(user.sub, token);
+      setItems(data);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      setError("Failed to load items. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchItems();
   }, [user, token, tokenLoading]);
+
+const handleSort = (field) => {
+  if(field === sortField){
+    setSortDirection(sortDirection==="asc" ? "desc" : "asc");
+  } else {
+    setSortField(field);
+    setSortDirection("asc");
+  }
+}
+
+const sortedItems = [...items].sort((a,b) => {
+  if(typeof a[sortField] ==='string'){
+    const compare = a[sortField].localeCompare(b[sortField]);
+    return sortDirection ==="asc" ? compare : -compare;
+  }else{
+    const compare = a[sortField] -b[sortField];
+    return sortDirection ==="asc" ? compare : -compare;
+  }
+});
+
+
   
   const handleDeleteItem = async (itemId) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
@@ -70,6 +91,13 @@ const DatabaseDisplay = () => {
     navigate("/editdata", { state: { itemId } });
   };
 
+  const sortIndicator = (field) => {
+    if(sortField === field){
+      return sortDirection === "asc" ? "^" : "v";
+    }
+    return"";
+  };
+
   return (
     <div className="wrapper">
       <h2>Welcome to the database!</h2>
@@ -78,10 +106,14 @@ const DatabaseDisplay = () => {
       
       {successMessage && <p className="success-message">{successMessage}</p>}
       {error && <p className="error-message">{error}</p>}
-
+<div style = {{display: "flex",gap: "10px",marginBottom: "15px"}}>
       <button onClick={() => navigate("/adddata", { state: { userId: user?.sub} })}>
         Add a new element
       </button>
+      <button onClick={fetchItems}>
+        Refresh
+        </button>
+      </div>
 
       {loading ? (
         <p>Loading items...</p>
@@ -90,19 +122,26 @@ const DatabaseDisplay = () => {
           <caption> Database</caption>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Publisher/Manufacturer</th>
-              <th>Release Year</th>
-              <th>Quantity</th>
-              <th>Condition</th>
-              <th>Price Paid</th>
+              <th onClick={() => handleSort("name")} style={{ cursor: "pointer"}}> Name {sortIndicator("name")}
+              </th>
+              <th onClick={() => handleSort("category")} style={{ cursor: "pointer"}}> Category {sortIndicator("category")}
+              </th>
+              <th onClick={() => handleSort("pubmanu")} style={{ cursor: "pointer"}}> Publisher/Manufacturer {sortIndicator("pubmanu")}
+              </th>
+              <th onClick={() => handleSort("year")} style={{ cursor: "pointer"}}> Year {sortIndicator("year")}
+              </th>
+              <th onClick={() => handleSort("quantity")} style={{ cursor: "pointer"}}> Quantity {sortIndicator("quantity")}
+              </th>
+              <th onClick={() => handleSort("condition")} style={{ cursor: "pointer"}}> Condition {sortIndicator("condition")}
+              </th>
+              <th onClick={() => handleSort("price")} style={{ cursor: "pointer"}}> Price Paid {sortIndicator("price")}
+              </th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {items.length > 0 ? (
-              items.map(item => (
+            {sortedItems.length > 0 ? (
+              sortedItems.map(item => (
                 <tr key={item.itemID}>
                   <td>{item.name}</td>
                   <td>

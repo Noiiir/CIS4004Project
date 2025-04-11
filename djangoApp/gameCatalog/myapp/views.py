@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -68,41 +69,79 @@ class UserItemsView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        input_serializer = FilterItemInputSerializer(data=request.data)
+        # DRF automatically parses JSON and places it in request.data
+        data = request.data
 
-        if not input_serializer.is_valid():
-            return Response(
-                {"error": "JSON was not properly formatted", "details": input_serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        
-        data = input_serializer.validated_data
-        filters = Q()
+        filters = {}
 
-        # Create filters for string fields
-        if data.get('name'):
-            filters &= Q(name__icontains=data['name'])
-        if data.get('pubmanu'):
-            filters &= Q(pubmanu__icontains=data['pubmanu'])
-        if data.get('condition'):
-            filters &= Q(condition__icontains=data['condition'])
+        # For character fields, use a case-insensitive match if provided.
+        if data.get("name", ""):
+            filters["name__icontains"] = data["name"]
+        if data.get("pubmanu", ""):
+            filters["pubmanu__icontains"] = data["pubmanu"]
+        if data.get("condition", ""):
+            filters["condition__icontains"] = data["condition"]
 
-        # Create filters for integer/foreign key fields
-        if data.get('category', -1) != -1:
-            filters &= Q(category=data['category'])
-        if data.get('year', -1) != -1:
-            filters &= Q(year=data['year'])
-        if data.get('quantity', -1) != -1:
-            filters &= Q(quantity=data['quantity'])
-        if data.get('price', -1) != -1:
-            filters &= Q(price=data['price'])
-        if data.get('userid', -1) != -1:
-            filters &= Q(userid=data['userid'])
+        # For integer fields, check if value is not -1.
+        if data.get("category", -1) != -1:
+            filters["category"] = data["category"]
+        if data.get("year", -1) != -1:
+            filters["year"] = data["year"]
+        if data.get("quantity", -1) != -1:
+            filters["quantity"] = data["quantity"]
+        if data.get("price", -1) != -1:
+            filters["price"] = data["price"]
+        if data.get("userid", -1) != -1:
+            filters["userid"] = data["userid"]
 
-        queryset = Item.objects.filter(filters)
-        serializer = ItemSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        queryset = Item.objects.filter(**filters)
+        items_list = list(queryset.values())
+
+        return Response(items_list, status=status.HTTP_200_OK)
+
+class CreateItemView(APIView):
+    """
+        Add an item to the database
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ItemSerializer(data = request.data)
+        serializer.is_valid()
+        serializer.save()
+        return Response({'message': 'Creation successful'}, status = status.HTTP_200_OK)
+
+class UpdateItemView(APIView):
+    """
+        Update an item in the database
+    """
+    permission_classes = [AllowAny]
     
+    def post(self, request, pk):
+        try:
+            item = Item.objects.get(pk = pk)
+        except Item.DoesNotExist:
+            return Response({'error': 'Item does not exist'}, status = status.HTTP_400_BAD_REQUEST)
+        serializer = ItemSerializer(item, data = request.data, partial = True)
+        serializer.is_valid()
+        serializer.save()
+        return Response({'message': 'Update successful'}, status = status.HTTP_200_OK)
+
+class DeleteItemView(APIView):
+    """
+        Delete an item in the database
+    """
+    permission_classes = [AllowAny]
+
+    def delete(self, request, pk):
+        try:
+            item = Item.objects.get(pk = pk)
+        except Item.DoesNotExist:
+            return Response({'error': 'Item does not exist'}, status = status.HTTP_400_BAD_REQUEST)
+        item.delete()
+        return Response({'message': 'Deletion successful'}, status = status.HTTP_200_OK)
+        
+
 class GetDjangoToken(APIView):
     """
         Get a token for the Django backend.

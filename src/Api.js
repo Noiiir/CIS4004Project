@@ -9,8 +9,6 @@ export const API_ENDPOINTS = {
 };
 
 
-
-
 const getAuth0Token = async () => {
   return getStoredToken();
 };

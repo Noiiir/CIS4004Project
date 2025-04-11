@@ -8,6 +8,9 @@ from .views import (
     RegisterView,
     UserItemsView,
     GetDjangoToken,
+    CreateItemView,
+    UpdateItemView,
+    DeleteItemView,
 )
 
 router = routers.DefaultRouter()
@@ -17,4 +20,8 @@ router.register(r'items', ItemViewSet, basename='item-api')
 urlpatterns = [
     path('api/getUserItems/', UserItemsView.as_view(), name='get_user_items'),
     path('api/', GetDjangoToken.as_view(), name='get_django_token'),
+    path('api/createUserItem/', CreateItemView.as_view(), name='create_user_item'),
+    path('api/updateUserItem/<int:pk>/', UpdateItemView.as_view(), name='update_user_item'),
+    path('api/deleteUserItem/<int:pk>/', DeleteItemView.as_view(), name='delete_user_item'),
+    path('api/getAllItems/', ItemViewSet.as_view({'get': 'list'}), name='get_all_items'),
 ]
